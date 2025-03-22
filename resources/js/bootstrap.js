@@ -1,4 +1,9 @@
 import axios from 'axios';
-window.axios = axios;
+import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
+import Clipboard from '@ryangjchandler/alpine-clipboard';
 
+window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+Alpine.plugin(Clipboard)
+Livewire.start();
