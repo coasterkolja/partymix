@@ -29,7 +29,7 @@ class SearchModal extends Component
         }
         
         if ($this->query) {
-            $items = SpotifyService::api($this->jam->access_token)->search($this->query, 'track', ['limit' => 5])->tracks->items;
+            $items = SpotifyService::api($this->jam->access_token)->search($this->query, 'track', ['limit' => 10])->tracks->items;
 
             $this->results = collect($items)->map(function ($item) {
                 return literal(

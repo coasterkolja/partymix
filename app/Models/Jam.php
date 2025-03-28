@@ -61,9 +61,11 @@ class Jam extends Model
     public function queueNextTrack()
     {
         $song = $this->queue()->first();
-        if ($song === null) return;
+        if ($song === null) return false;
         
         SpotifyService::api($this->access_token)->queue($song->id);
         $this->queue()->detach($song->id);
+        
+        return true;
     }
 }

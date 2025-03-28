@@ -30,7 +30,8 @@ class CreateJam extends Component
             'expiration_date' => $this->user->expirationDate,
         ]);
 
-        CheckPlayback::dispatch($jam)->delay(now()->addSeconds(5));
+        CheckPlayback::dispatch($jam)
+            /* ->delay(now()->addSeconds(5)) */;
 
         $this->redirect(route('jams.edit', $this->jamId), navigate: true);
     }
