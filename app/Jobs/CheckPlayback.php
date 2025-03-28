@@ -6,6 +6,7 @@ use App\Models\Jam;
 use App\Events\JamUpdated;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\DB;
 
 class CheckPlayback implements ShouldQueue
 {
@@ -16,7 +17,7 @@ class CheckPlayback implements ShouldQueue
      */
     public function __construct(protected Jam $jam)
     {
-        //
+        // $this->onQueue('jam:'.$this->jam->id);
     }
 
     /**
@@ -24,6 +25,9 @@ class CheckPlayback implements ShouldQueue
      */
     public function handle(): void
     {
+        // Delete all jobs for this jam
+        DB::table('jobs')->where('payload', 'like', '%'.$this->jam->id.'%')->delete();
+
         // Update the playback state in the database
         $this->jam->updatePlaystate();
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Host;
 use App\Livewire\EditJam;
 use App\Livewire\ViewJam;
 use App\Livewire\Welcome;
@@ -16,4 +17,4 @@ Route::get('auth', function () {
 
 Route::get('create', CreateJam::class)->name('jams.create');
 Route::get('jam/{jam}', ViewJam::class)->name('jams');
-Route::get('jam/{jam}/edit', EditJam::class)->name('jams.edit');
+Route::get('jam/{jam}/edit', EditJam::class)->middleware(Host::class)->name('jams.edit');

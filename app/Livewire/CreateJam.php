@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\Jam;
 use Livewire\Component;
 use App\Jobs\CheckPlayback;
-use Illuminate\Support\Facades\Schedule;
 use Laravel\Socialite\Facades\Socialite;
 
 class CreateJam extends Component
@@ -30,8 +29,9 @@ class CreateJam extends Component
             'expiration_date' => $this->user->expirationDate,
         ]);
 
-        CheckPlayback::dispatch($jam)
-            /* ->delay(now()->addSeconds(5)) */;
+        session()->put('token', $jam->access_token);
+
+        CheckPlayback::dispatch($jam)/* ->delay(now()->addSeconds(5)) */;
 
         $this->redirect(route('jams.edit', $this->jamId), navigate: true);
     }

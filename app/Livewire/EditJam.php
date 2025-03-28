@@ -40,7 +40,6 @@ class EditJam extends Component
 
             $this->jam->playlists()->attach($playlistModel->id);
 
-            // $this->playlistUrl = '';
             unset($this->playlistUrl);
         } catch (\Throwable $e) {
             if($e instanceof UniqueConstraintViolationException) {
@@ -48,7 +47,7 @@ class EditJam extends Component
                 return;
             }
 
-            $this->addError('playlistUrl', 'Invalid Playlist ID: ' . $e->getMessage());
+            $this->addError('playlistUrl', 'Invalid Playlist ID');
         }
     }
 

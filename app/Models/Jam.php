@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\CheckPlayback;
 use App\Services\SpotifyService;
 use Illuminate\Database\Eloquent\Model;
 
@@ -67,5 +68,11 @@ class Jam extends Model
         $this->queue()->detach($song->id);
         
         return true;
+    }
+
+    public function skip() {
+        $this->queueNextTrack();
+        SpotifyService::api($this->access_token)->next();
+        CheckPlayback::dispatch($this);
     }
 }

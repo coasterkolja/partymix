@@ -1,6 +1,12 @@
 <div>
     <x-card>
-        <flux:heading size="xl">Warteschlange</flux:heading>
+        <div class="flex justify-between gap-2 items-center">
+            <flux:heading size="xl">Warteschlange</flux:heading>
+            @host($jam->access_token)
+                <flux:button href="{{ route('jams.edit', $jam) }}" icon="cog-6-tooth" variant="ghost" size="sm"
+                    wire:navigate />
+            @endhost
+        </div>
 
         <div class="flex mt-4 flex-col gap-3 border-1 border-zinc-200 dark:border-zinc-600 rounded-lg p-2">
             @if ($jam->queue->isEmpty())
@@ -24,8 +30,9 @@
 
         <livewire:search-modal :$jam />
     </x-card>
+
     @if ($jam->currentSong)
-        <x-card class="mt-4">
+        <x-card class="mt-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <img src="{{ $jam->currentSong->image }}" class="rounded-md h-12 aspect-square" />
                 <div class="flex flex-col gap-1">
@@ -33,6 +40,10 @@
                     <span class="text-sm text-muted">{{ $jam->currentSong->artist }}</span>
                 </div>
             </div>
+
+            @host($jam->access_token)
+                <flux:button wire:click="skip" icon="skip-forward" />
+            @endhost
         </x-card>
     @endif
 </div>
