@@ -9,7 +9,9 @@ use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', Welcome::class)->name('welcome');
 Route::get('auth', function () {
-    return Socialite::driver('spotify')->redirect();
+    return Socialite::driver('spotify')
+        ->setScopes(['user-read-playback-state', 'user-modify-playback-state'])
+        ->redirect();
 })->name('jams.auth');
 
 Route::get('create', CreateJam::class)->name('jams.create');

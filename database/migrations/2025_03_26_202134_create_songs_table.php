@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Jam;
-use App\Models\Song;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('queued_songs', function (Blueprint $table) {
-            $table->foreignIdFor(Jam::class);
-            $table->foreignIdFor(Song::class);
+        Schema::create('songs', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->string('artist');
+            $table->string('image');
             $table->timestamps();
-
-            $table->primary(['jam_id', 'song_id']);
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('queued_songs');
+        Schema::dropIfExists('songs');
     }
 };
