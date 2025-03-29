@@ -2,10 +2,16 @@
     <x-card>
         <div class="flex justify-between gap-2 items-center">
             <flux:heading size="xl">Warteschlange</flux:heading>
-            @host($jam->access_token)
-                <flux:button href="{{ route('jams.edit', $jam) }}" icon="cog-6-tooth" variant="ghost" size="sm"
-                    wire:navigate />
-            @endhost
+            <div class="flex items-center gap-2">
+                <flux:modal.trigger name="qr-code">
+                    <flux:button icon="qr-code" variant="ghost" size="sm" />
+                </flux:modal.trigger>
+
+                @host($jam->access_token)
+                    <flux:button href="{{ route('jams.edit', $jam) }}" icon="cog-6-tooth" variant="ghost" size="sm"
+                        wire:navigate />
+                @endhost
+            </div>
         </div>
 
         <div class="flex mt-4 flex-col gap-3 border-1 border-zinc-200 dark:border-zinc-600 rounded-lg p-2">
@@ -29,6 +35,10 @@
         </flux:modal.trigger>
 
         <livewire:search-modal :$jam />
+        <flux:modal name="qr-code">
+            <flux:heading size="lg" class="mb-4">QR Code</flux:heading>
+            <img src="{{ asset('storage/qr-codes/' . $jam->id . '.svg') }}" alt="QR Code" />
+        </flux:modal>
     </x-card>
 
     @if ($jam->currentSong)

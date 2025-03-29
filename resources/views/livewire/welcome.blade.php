@@ -1,6 +1,6 @@
 <x-card>
     <flux:heading size="xl">Spotify PartyMix</flux:heading>
-    <flux:subheading>Join a Jam or create a new one</flux:subheading>
+    <flux:subheading>Tritt einem Jam bei oder erstelle einen neuen</flux:subheading>
 
     <form wire:submit="join" class="mt-4 flex gap-2">
         <flux:field class="grow">
@@ -12,5 +12,5 @@
 
     <flux:separator text="or" class="my-4" />
 
-    <flux:button wire:click="create" class="w-full">Create a Jam</flux:button>
+    <flux:button href="{{ route('jams.auth') }}" class="w-full">Create a Jam</flux:button>
 </x-card>

@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Middleware\Host;
+use App\Livewire\QRCode;
 use App\Livewire\EditJam;
 use App\Livewire\ViewJam;
 use App\Livewire\Welcome;
 use App\Livewire\CreateJam;
+use App\Http\Middleware\Host;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 

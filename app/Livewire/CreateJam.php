@@ -29,6 +29,8 @@ class CreateJam extends Component
             'expiration_date' => $this->user->expirationDate,
         ]);
 
+        $jam->generateQrCode();
+
         session()->put('token', $jam->access_token);
 
         CheckPlayback::dispatch($jam)/* ->delay(now()->addSeconds(5)) */;

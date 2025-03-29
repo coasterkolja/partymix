@@ -21,7 +21,8 @@
                             <img src="{{ $playlist->image }}" class="rounded-md h-12 aspect-square" />
                             <div class="flex items-center">{{ $playlist->name }}</div>
                         </div>
-                        <flux:button size="sm" variant="danger" wire:click="removePlaylist('{{ $playlist->id }}')" icon="trash" />
+                        <flux:button size="sm" variant="danger" wire:click="removePlaylist('{{ $playlist->id }}')"
+                            icon="trash" />
                     </div>
                 @endforeach
             @endif

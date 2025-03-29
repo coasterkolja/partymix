@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use App\Jobs\CheckPlayback;
+use App\Observers\JamObserver;
 use App\Services\SpotifyService;
 use Illuminate\Database\Eloquent\Model;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
+#[ObservedBy(JamObserver::class)]
 class Jam extends Model
 {
     protected $keyType = 'string';
@@ -74,5 +78,14 @@ class Jam extends Model
         $this->queueNextTrack();
         SpotifyService::api($this->access_token)->next();
         CheckPlayback::dispatch($this);
+    }
+
+    public function url() {
+        return route('jams', $this->id);
+    }
+
+    public function generateQrCode() {
+        if (file_exists(storage_path('app/public/qr-codes/' . $this->id . '.svg'))) return;
+        QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/' . $this->id . '.svg'));
     }
 }
