@@ -40,6 +40,7 @@ class Jam extends Model
         return $this->hasOne(Song::class, 'id', 'current_song_id');
     }
 
+    // TODO: make this dynamic
     public function cooldownTimeHuman()
     {
         return '60 Minuten';
@@ -70,6 +71,8 @@ class Jam extends Model
         
         SpotifyService::api($this->access_token)->queue($song->id);
         $this->queue()->detach($song->id);
+        
+        $this->cooldowns()->attach($song->id);
         
         return true;
     }

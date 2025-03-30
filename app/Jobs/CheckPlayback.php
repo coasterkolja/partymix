@@ -28,6 +28,10 @@ class CheckPlayback implements ShouldQueue
         // Delete all jobs for this jam
         DB::table('jobs')->where('payload', 'like', '%'.$this->jam->id.'%')->delete();
 
+        // Delete all cooldowns older than cooldown time
+        // TODO: make this dynamic
+        // DB::table('cooldowns')->where('jam_id', $this->jam->id)->where('created_at', '<', now()->subMinutes(60))->delete();
+
         // Update the playback state in the database
         $this->jam->updatePlaystate();
 
@@ -57,3 +61,5 @@ class CheckPlayback implements ShouldQueue
         self::dispatch($this->jam)->delay(now()->addSeconds(10));
     }
 }
+
+// select "cooldowns".*, "cooldowns"."jam_id" as "pivot_jam_id", "cooldowns"."song_id" as "pivot_song_id", "cooldowns"."created_at" as "pivot_created_at", "cooldowns"."updated_at" as "pivot_updated_at" from "cooldowns" inner join "cooldowns" on "cooldowns"."id" = "cooldowns"."song_id" where "cooldowns"."jam_id" = 7766-5250

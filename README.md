@@ -1,7 +1,7 @@
 # Spotify PartyMix
 Spotify Partymix is a Spotify Group Session, that is setup by one host. As a host you can login with your Spotify Premium account and let guests join. Everyone may add songs to the queue, but noone except the host can control the currently playing song.
 
-## Planned Features
+## Todo
 - [x] Make Jams joinable by a QR-Code
 - [ ] Add Playlist Pool for collection of playlists where the app should queue songs from if the wishlist is emty
 - [x] Add song skipping ability for host
