@@ -15,7 +15,7 @@ class SpotifyService
                 $session = new Session(
                     config('services.spotify.client_id'),
                     config('services.spotify.client_secret'),
-                    config('services.spotify.redirect_uri')
+                    config('services.spotify.redirect')
                 );
                 
                 $session->refreshAccessToken($jam->refresh_token);
@@ -25,9 +25,9 @@ class SpotifyService
                 $jam->expiration_date = now()->addSeconds(3600);
 
                 $jam->save();
-
-                $token = $jam->access_token;
             }
+            
+            $token = $jam->access_token;
         } elseif (is_string($jam)) {
             $token = $jam;
         }

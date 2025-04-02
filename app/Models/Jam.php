@@ -7,43 +7,77 @@ use App\Observers\JamObserver;
 use App\Services\SpotifyService;
 use Illuminate\Database\Eloquent\Model;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy(JamObserver::class)]
 class Jam extends Model
 {
+
+    protected $with = [
+        'queue',
+        'currentSong',
+        'cooldowns',
+    ];
+
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $guarded = [];
 
-    protected function casts()
+    protected $fillable = [
+        'id',
+        'access_token',
+        'refresh_token',
+        'expiration_date',
+        'current_song_id',
+        'is_playing',
+        'song_endtime',
+        'last_action_at',
+    ];
+
+    protected $casts = [
+        'expiration_date' => 'datetime',
+        'is_playing' => 'boolean',
+        'song_endtime' => 'datetime',
+        'last_action_at' => 'datetime',
+    ];
+
+    public function playlists(): BelongsToMany
     {
-        return [
-            'expiration_date' => 'datetime',
-            'song_endtime' => 'datetime',
-        ];
+        return $this->belongsToMany(Playlist::class, 'jam_playlist');
     }
 
-    public function playlists()
+    public function queue(): BelongsToMany
     {
-        return $this->belongsToMany(Playlist::class);
-    }
-
-    public function queue()
-    {
-        return $this->belongsToMany(Song::class, 'queued_songs', 'song_id', 'jam_id')
+        return $this->belongsToMany(Song::class, 'queued_songs')
             ->withTimestamps()
             ->orderBy('queued_songs.created_at');
     }
 
-    public function currentSong() {
-        return $this->hasOne(Song::class, 'id', 'current_song_id');
+    public function currentSong(): BelongsTo
+    {
+        return $this->belongsTo(Song::class, 'current_song_id');
+    }
+
+    public function cooldowns(): BelongsToMany
+    {
+        return $this->belongsToMany(Song::class, 'cooldowns')
+            ->withTimestamps();
+    }
+
+    public function overdueCooldowns() {
+        return $this->cooldowns()->wherePivot('created_at', '<', now()->subMinutes($this->cooldownMinutes()));
+    }
+
+    public function cooldownMinutes()
+    {
+        return 10;
     }
 
     // TODO: make this dynamic
     public function cooldownTimeHuman()
     {
-        return '60 Minuten';
+        return $this->cooldownMinutes() . ' Minuten';
     }
 
     public function remainingTime()
@@ -68,26 +102,29 @@ class Jam extends Model
     {
         $song = $this->queue()->first();
         if ($song === null) return false;
-        
+
         SpotifyService::api($this->access_token)->queue($song->id);
         $this->queue()->detach($song->id);
-        
+
         $this->cooldowns()->attach($song->id);
-        
+
         return true;
     }
 
-    public function skip() {
+    public function skip()
+    {
         $this->queueNextTrack();
         SpotifyService::api($this->access_token)->next();
         CheckPlayback::dispatch($this);
     }
 
-    public function url() {
+    public function url()
+    {
         return route('jams', $this->id);
     }
 
-    public function generateQrCode() {
+    public function generateQrCode()
+    {
         if (file_exists(storage_path('app/public/qr-codes/' . $this->id . '.svg'))) return;
         QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/' . $this->id . '.svg'));
     }

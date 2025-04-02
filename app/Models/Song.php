@@ -8,15 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Song extends Model
 {
-    protected $guarded = [];
+    protected $keyType = 'string';
     public $incrementing = false;
-    public $keyType = "string";
 
-    public static function fetchAndSave($id, $token) {
+    protected $isOnCooldown = false;
+    protected $cooldownPercent = 0;
+
+    protected $fillable = [
+        'id',
+        'name',
+        'artist',
+        'image',
+    ];
+
+    public static function fetchAndSave($id, $token)
+    {
         $song = SpotifyService::api($token)->getTrack($id);
-        
+
         self::firstOrCreate([
             'id' => $song->id,
+        ], [
             'name' => $song->name,
             'artist' => Arr::join(Arr::map($song->artists, function ($item) {
                 return $item->name;

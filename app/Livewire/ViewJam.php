@@ -38,10 +38,10 @@ class ViewJam extends Component
         $this->jam->skip();
     }
 
-    public function addToQueue(array $songData)
+    public function addToQueue(array $songId)
     {
-        $song = Song::firstOrCreate($songData);
-        $this->jam->queue()->attach($song->id);
+        Song::fetchAndSave($songId, $this->jam->access_token);
+        $this->jam->queue()->attach($songId);
         event(new JamUpdated($this->jam));
     }
 }

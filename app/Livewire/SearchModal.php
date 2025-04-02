@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Events\JamUpdated;
 use Flux\Flux;
 use App\Models\Jam;
 use App\Support\Arr;
@@ -27,11 +26,17 @@ class SearchModal extends Component
         if ($this->results->isNotEmpty() && !$this->query) {
             $this->results = collect();
         }
+
+        $cooldowns = $this->jam->cooldowns->where('created_at', '>', now()->subMinutes($this->jam->cooldownMinutes()));
         
         if ($this->query) {
-            $items = SpotifyService::api($this->jam->access_token)->search($this->query, 'track', ['limit' => 10])->tracks->items;
+            $items = SpotifyService::api($this->jam)->search($this->query, 'track', ['limit' => 10])->tracks->items;
 
-            $this->results = collect($items)->map(function ($item) {
+            $this->results = collect($items)->map(function ($item) use ($cooldowns) {
+                if($cd = $cooldowns->find($item->id)) {
+                    $cdPercent = $cd->pivot->created_at->diffInMinutes(now());
+                }
+
                 return literal(
                     id: $item->id,
                     name: $item->name,
@@ -39,6 +44,8 @@ class SearchModal extends Component
                         return $item->name;
                     }), ', '),
                     image: Arr::last($item->album->images)->url,
+                    isOnCooldown: $cd ? true : false,
+                    cooldown: $cd ? $cdPercent : 0
                 );
             });
         }
@@ -47,8 +54,7 @@ class SearchModal extends Component
     }
 
     public function addToQueue(string $id) {
-        $song = $this->results->firstWhere('id', $id);
-        $this->dispatch('addToQueue', $song);
+        $this->dispatch('addToQueue', $id);
         Flux::modal('search-song')->close();
         // $this->query = '';
         // $this->results = collect();

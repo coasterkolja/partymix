@@ -17,6 +17,9 @@
                         <span>{{ $song->name }}</span>
                         <span class="text-sm text-muted-foreground">{{ $song->artist }}</span>
                     </div>
+                    @if ($song->isOnCooldown)
+                        <span>{{ $song->cooldown }}</span>
+                    @endif
                 </div>
             @endforeach
         @endif
