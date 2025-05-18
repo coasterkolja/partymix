@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Jobs\CheckPlayback;
 use App\Observers\JamObserver;
 use App\Services\SpotifyService;
-use Illuminate\Database\Eloquent\Model;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 #[ObservedBy(JamObserver::class)]
 class Jam extends Model
 {
-
     protected $with = [
         'queue',
         'currentSong',
@@ -22,6 +23,7 @@ class Jam extends Model
     ];
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -33,6 +35,7 @@ class Jam extends Model
         'is_playing',
         'song_endtime',
         'last_action_at',
+        'host_token',
     ];
 
     protected $casts = [
@@ -65,19 +68,25 @@ class Jam extends Model
             ->withTimestamps();
     }
 
-    public function overdueCooldowns() {
-        return $this->cooldowns()->wherePivot('created_at', '<', now()->subMinutes($this->cooldownMinutes()));
+    public function activeCooldowns()
+    {
+        return $this->cooldowns()->wherePivot('created_at', '>', now()->subMinutes($this->cooldownMinutes()));
     }
 
-    public function cooldownMinutes()
+    public function overdueCooldowns()
     {
-        return 10;
+        return $this->cooldowns()->wherePivot('created_at', '<', now()->subMinutes($this->cooldownMinutes()));
     }
 
     // TODO: make this dynamic
     public function cooldownTimeHuman()
     {
-        return $this->cooldownMinutes() . ' Minuten';
+        return now()->diffAsCarbonInterval(now()->addMinutes($this->cooldownMinutes()))->forHumans();
+    }
+
+    public function cooldownMinutes()
+    {
+        return 10;
     }
 
     public function remainingTime()
@@ -101,7 +110,9 @@ class Jam extends Model
     public function queueNextTrack()
     {
         $song = $this->queue()->first();
-        if ($song === null) return false;
+        if ($song === null) {
+            return false;
+        }
 
         SpotifyService::api($this->access_token)->queue($song->id);
         $this->queue()->detach($song->id);
@@ -125,7 +136,9 @@ class Jam extends Model
 
     public function generateQrCode()
     {
-        if (file_exists(storage_path('app/public/qr-codes/' . $this->id . '.svg'))) return;
-        QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/' . $this->id . '.svg'));
+        if (file_exists(storage_path('app/public/qr-codes/'.$this->id.'.svg'))) {
+            return;
+        }
+        QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/'.$this->id.'.svg'));
     }
 }

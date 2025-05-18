@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
-use App\Models\Jam;
-use Livewire\Component;
 use App\Jobs\CheckPlayback;
+use App\Models\Jam;
 use Laravel\Socialite\Facades\Socialite;
+use Livewire\Component;
 
 class CreateJam extends Component
 {
     public string $jamId;
+
     public $user;
 
     public function mount()
@@ -22,16 +25,19 @@ class CreateJam extends Component
 
     public function create()
     {
+        $hostToken = uniqid();
+
         $jam = Jam::create([
             'id' => $this->jamId,
             'access_token' => $this->user->token,
             'refresh_token' => $this->user->refreshToken,
             'expiration_date' => $this->user->expirationDate,
+            'host_token' => $hostToken,
         ]);
 
         $jam->generateQrCode();
 
-        session()->put('token', $jam->access_token);
+        session()->put('token', $hostToken);
 
         CheckPlayback::dispatch($jam)/* ->delay(now()->addSeconds(5)) */;
 
@@ -45,6 +51,6 @@ class CreateJam extends Component
 
     private function generateJamId()
     {
-        return mt_rand(1000, 9999) . '-' . mt_rand(1000, 9999);
+        return mt_rand(1000, 9999).'-'.mt_rand(1000, 9999);
     }
 }

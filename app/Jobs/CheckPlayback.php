@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
-use App\Models\Jam;
 use App\Events\JamUpdated;
-use Illuminate\Foundation\Queue\Queueable;
+use App\Models\Jam;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 
 class CheckPlayback implements ShouldQueue
@@ -26,9 +28,7 @@ class CheckPlayback implements ShouldQueue
         DB::table('jobs')->where('payload', 'like', '%'.$this->jam->id.'%')->delete();
 
         // Delete all cooldowns older than cooldown time
-        // TODO: make this dynamic
-        // DB::table('cooldowns')->where('jam_id', $this->jam->id)->where('created_at', '<', now()->subMinutes(60))->delete();
-        // $this->jam->cooldowns->overdue()->delete();
+        $this->jam->overdueCooldowns()->detach();
 
         // Update the playback state in the database
         $this->jam->updatePlaystate();
@@ -41,6 +41,7 @@ class CheckPlayback implements ShouldQueue
         if (! $this->jam->is_playing) {
             self::dispatch($this->jam)
                 ->delay(now()->addSeconds(5));
+
             return;
         }
 
@@ -49,13 +50,14 @@ class CheckPlayback implements ShouldQueue
         if ($this->jam->remainingTime() > 10) {
             self::dispatch($this->jam)
                 ->delay(now()->addSeconds($this->jam->remainingTime() - 5));
+
             return;
         }
 
         // If the remaining time is less than 10 seconds, add a new song
         $addedNewSong = $this->jam->queueNextTrack();
         // if ($addedNewSong) event(new JamUpdated($this->jam));
-        
+
         self::dispatch($this->jam)->delay(now()->addSeconds(10));
     }
 }

@@ -1,9 +1,9 @@
 <x-card>
-    <flux:heading size="xl">Jam erstellen</flux:heading>
-    <flux:subheading>Teile die Jam ID mit deinen Freunden</flux:subheading>
+    <flux:heading size="xl">{{ __('jam.create_jam') }}</flux:heading>
+    <flux:subheading>{{ __('jam.share_id') }}</flux:subheading>
 
     <div class="flex gap-2 flex-col mt-4">
         <flux:input value="{{ $jamId }}" readonly copyable />
-        <flux:button wire:click="create">Erstellen</flux:button>
+        <flux:button wire:click="create">{{ __('jam.create') }}</flux:button>
     </div>
 </x-card>

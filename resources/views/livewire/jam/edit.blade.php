@@ -1,11 +1,11 @@
 <x-card>
-    <flux:heading size="xl">Einstellungen</flux:heading>
-    <flux:subheading>Diese Einstellungen können jederzeit geändert werden</flux:subheading>
+    <flux:heading size="xl">{{ __('jam.settings') }}</flux:heading>
+    <flux:subheading>{{ __('jam.settings_subheading') }}</flux:subheading>
 
     <div class="mt-4 flex flex-col gap-2">
         <form wire:submit.prevent="addPlaylist" class="flex gap-2">
             <flux:field class="grow">
-                <flux:input wire:model="playlistUrl" type="string" placeholder="Playlist Link" />
+                <flux:input wire:model="playlistUrl" type="string" :placeholder="__('jam.playlist_url')" />
                 <flux:error name="playlistUrl" />
             </flux:field>
             <flux:button type="submit" icon="plus" />
@@ -13,7 +13,7 @@
 
         <div class="flex flex-col gap-3 border-1 border-zinc-200 dark:border-zinc-600 rounded-lg p-2">
             @if ($jam->playlists->isEmpty())
-                <div class="text-sm text-muted text-center">Keine Playlists hinzugefügt</div>
+                <div class="text-sm text-muted text-center">{{ __('jam.no_playlists_added') }}</div>
             @else
                 @foreach ($jam->playlists as $playlist)
                     <div class="flex items-center justify-between" wire:key="{{ $playlist->id }}">
@@ -29,5 +29,5 @@
         </div>
     </div>
 
-    <flux:button wire:click="save" variant="primary" class="w-full mt-4">Speichern</flux:button>
+    <flux:button wire:click="save" variant="primary" class="w-full mt-4">{{ __('jam.save') }}</flux:button>
 </x-card>

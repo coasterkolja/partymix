@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-translation-manager": "^0.6.7",
         "jwilsson/spotify-web-api-php": "^6.2",
         "laravel/framework": "^12.0",
         "laravel/reverb": "^1.0",
@@ -62,7 +63,10 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan queue:listen --tries=1\" \"php artisan reverb:start\" \"npm run dev\" --names='queue,reverb,vite'"
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan queue:listen --tries=1\" \"php artisan reverb:start\" \"npm run dev\" --names='queue,reverb,vite'  --ansi"
+        ],
+        "pint": [
+            "./vendor/bin/pint -v --ansi"
         ]
     },
     "extra": {

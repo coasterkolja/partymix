@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Jam;
@@ -17,7 +19,7 @@ class SpotifyService
                     config('services.spotify.client_secret'),
                     config('services.spotify.redirect')
                 );
-                
+
                 $session->refreshAccessToken($jam->refresh_token);
 
                 $jam->access_token = $session->getAccessToken();
@@ -26,13 +28,13 @@ class SpotifyService
 
                 $jam->save();
             }
-            
+
             $token = $jam->access_token;
         } elseif (is_string($jam)) {
             $token = $jam;
         }
 
-        $api = new SpotifyWebAPI();
+        $api = new SpotifyWebAPI;
         $api->setAccessToken($token);
 
         return $api;

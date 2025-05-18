@@ -1,10 +1,11 @@
 <?php
 
-use App\Models\Jam;
+declare(strict_types=1);
+
 use App\Models\Song;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->foreignIdFor(Song::class, 'current_song_id')->nullable();
             $table->datetime('song_endtime')->nullable();
             $table->dateTime('last_action_at')->nullable();
+            $table->string('host_token');
             $table->timestamps();
         });
     }

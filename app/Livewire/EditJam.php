@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
 use App\Models\Jam;
-use Livewire\Component;
 use App\Models\Playlist;
-use Livewire\Attributes\Rule;
 use App\Services\SpotifyService;
-use Illuminate\Support\Collection;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Livewire\Attributes\Rule;
+use Livewire\Component;
 
 class EditJam extends Component
 {
@@ -35,15 +36,16 @@ class EditJam extends Component
                 'id' => $playlist->id,
                 'name' => $playlist->name,
                 'image' => $playlist->images[0]->url,
-                'snapshot_id' => $playlist->snapshot_id
+                'snapshot_id' => $playlist->snapshot_id,
             ]);
 
             $this->jam->playlists()->attach($playlistModel->id);
 
             unset($this->playlistUrl);
         } catch (\Throwable $e) {
-            if($e instanceof UniqueConstraintViolationException) {
-                $this->addError('playlistUrl', 'Playlist already added: ' . $playlist->name);
+            if ($e instanceof UniqueConstraintViolationException) {
+                $this->addError('playlistUrl', 'Playlist already added: '.$playlist->name);
+
                 return;
             }
 
@@ -51,11 +53,13 @@ class EditJam extends Component
         }
     }
 
-    public function removePlaylist($id) {
+    public function removePlaylist($id)
+    {
         $this->jam->playlists()->detach($id);
     }
 
-    public function save() {
+    public function save()
+    {
         $this->redirect(route('jams', $this->jam->id), navigate: true);
     }
 

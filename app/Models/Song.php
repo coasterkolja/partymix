@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use Illuminate\Support\Arr;
 use App\Services\SpotifyService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Song extends Model
 {
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $isOnCooldown = false;
+
     protected $cooldownPercent = 0;
 
     protected $fillable = [

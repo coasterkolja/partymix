@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
 use App\Events\JamUpdated;
@@ -17,14 +19,16 @@ class ViewJam extends Component
         $this->jam = $jam;
     }
 
-    public function getListeners() {
+    public function getListeners()
+    {
         return [
             'echo:jam.'.$this->jam->id.',JamUpdated' => 'updateJam',
             'addToQueue' => 'addToQueue',
         ];
     }
 
-    public function updateJam() {
+    public function updateJam()
+    {
         $this->jam->refresh();
     }
 
@@ -33,12 +37,13 @@ class ViewJam extends Component
         return view('livewire.jam.view');
     }
 
-    public function skip() {
+    public function skip()
+    {
         Gate::allowIf($this->jam->access_token === session('token'));
         $this->jam->skip();
     }
 
-    public function addToQueue(array $songId)
+    public function addToQueue(string $songId)
     {
         Song::fetchAndSave($songId, $this->jam->access_token);
         $this->jam->queue()->attach($songId);

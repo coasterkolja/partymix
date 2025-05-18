@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     /*
@@ -38,7 +40,7 @@ return [
     'spotify' => [
         'client_id' => env('SPOTIFY_CLIENT_ID'),
         'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
-        'redirect' => env('APP_URL') . env('SPOTIFY_REDIRECT_URI')
+        'redirect' => env('APP_URL').env('SPOTIFY_REDIRECT_URI'),
     ],
 
 ];

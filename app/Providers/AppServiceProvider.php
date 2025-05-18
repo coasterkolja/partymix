@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('spotify', \SocialiteProviders\Spotify\Provider::class);
         });
 
-        Blade::if('host', function ($token) {
-            return $token === session('token');
+        Blade::if('host', function ($jam) {
+            return $jam->host_token === session('token');
         });
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -16,8 +18,8 @@ class Host
     public function handle(Request $request, Closure $next): Response
     {
         $jam = $request->route('jam');
-        
-        if ($request->session()->get('token') !== $jam->access_token) {
+
+        if ($request->session()->get('token') !== $jam->host_token) {
             return redirect()->route('jams', $jam->id);
         }
 
