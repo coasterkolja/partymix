@@ -39,13 +39,22 @@ class ViewJam extends Component
 
     public function skip()
     {
-        Gate::allowIf($this->jam->access_token === session('token'));
+        Gate::allowIf($this->jam->host_token === session('token'));
         $this->jam->skip();
     }
 
     public function addToQueue(string $songId)
     {
         Song::fetchAndSave($songId, $this->jam->access_token);
+
+        if ($this->jam->queue()->find($songId)) {
+            return;
+        }
+
+        if ($this->jam->cooldowns()->find($songId)) {
+            return;
+        }
+        
         $this->jam->queue()->attach($songId);
         event(new JamUpdated($this->jam));
     }

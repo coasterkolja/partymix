@@ -29,5 +29,7 @@
         </div>
     </div>
 
+    {{-- <flux:input placeholder="Cooldown (Minuten)" type="number" value="{{ $jam->cooldown }}" wire:model.live="cooldown" /> --}}
+
     <flux:button wire:click="save" variant="primary" class="w-full mt-4">{{ __('jam.save') }}</flux:button>
 </x-card>

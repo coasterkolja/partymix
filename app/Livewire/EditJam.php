@@ -17,6 +17,10 @@ class EditJam extends Component
     #[Rule('string')]
     public string $playlistUrl;
 
+    // #[Rule('required')]
+    // #[Rule('int')]
+    // public int $cooldown;
+
     public Jam $jam;
 
     public function mount(Jam $jam)

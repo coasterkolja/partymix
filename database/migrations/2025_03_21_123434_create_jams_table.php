@@ -24,6 +24,7 @@ return new class extends Migration
             $table->datetime('song_endtime')->nullable();
             $table->dateTime('last_action_at')->nullable();
             $table->string('host_token');
+            $table->integer('song_cooldown')->default(60);
             $table->timestamps();
         });
     }

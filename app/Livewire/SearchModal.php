@@ -41,6 +41,7 @@ class SearchModal extends Component
                     $cdPercent = floor(100 - $cd->pivot->created_at->diffInMinutes(now()) / $this->jam->cooldownMinutes() * 100);
                 }
 
+                // TODO: Use DTO
                 return literal(
                     id: $item->id,
                     name: $item->name,

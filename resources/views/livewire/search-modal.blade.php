@@ -11,8 +11,10 @@
             <div class="text-sm text-muted text-center">{{ __('jam.no_results') }}</div>
         @else
             @foreach ($results as $song)
-                <div class="flex items-center gap-3" wire:key="{{ $song->id }}"
-                    wire:click="addToQueue('{{ $song->id }}')">
+                @php
+                    $addHandler = !$song->isOnCooldown ? 'wire:click="addToQueue(`'.$song->id.'`)"' : '';
+                @endphp
+                <div @class(['flex', 'items-cenet', 'gap-3', 'opacity-50' => $song->isOnCooldown, 'cursor-pointer' => !$song->isOnCooldown, 'select-none']) wire:key="{{ $song->id }}" {!! $addHandler !!}>
                     <img src="{{ $song->image }}" class="rounded-md h-12 aspect-square" />
                     <div class="flex flex-col gap-1 grow">
                         <span>{{ $song->name }}</span>

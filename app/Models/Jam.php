@@ -78,15 +78,15 @@ class Jam extends Model
         return $this->cooldowns()->wherePivot('created_at', '<', now()->subMinutes($this->cooldownMinutes()));
     }
 
-    // TODO: make this dynamic
     public function cooldownTimeHuman()
     {
         return now()->diffAsCarbonInterval(now()->addMinutes($this->cooldownMinutes()))->forHumans();
     }
 
+    // TODO: make this dynamic
     public function cooldownMinutes()
     {
-        return 10;
+        return $this->song_cooldown;
     }
 
     public function remainingTime()
