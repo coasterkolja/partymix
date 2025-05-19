@@ -23,4 +23,7 @@ return [
     'create_jam' => 'Jam Erstellen',
     'share_id' => 'Teile die Jam ID mit deinen Freunden',
     'welcome_title' => 'Spotify PartyMix',
+    'history' => 'Verlauf',
+    'history_empty' => 'Verlauf leer',
+    'edit_queue' => 'Warteschlange bearbeiten'
 ];

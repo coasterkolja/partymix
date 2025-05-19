@@ -34,7 +34,11 @@ class CheckPlayback implements ShouldQueue
         $this->jam->updatePlaystate();
 
         if ($this->jam->wasChanged('current_song_id')) {
+            // Dispatch Event to reflect change on the client
             event(new JamUpdated($this->jam));
+
+            // Add song to history
+            $this->jam->addCurrentSongToHistory();
         }
 
         // When playback is paused check every 5 seconds if it started again

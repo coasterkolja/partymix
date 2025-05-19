@@ -83,7 +83,6 @@ class Jam extends Model
         return now()->diffAsCarbonInterval(now()->addMinutes($this->cooldownMinutes()))->forHumans();
     }
 
-    // TODO: make this dynamic
     public function cooldownMinutes()
     {
         return $this->song_cooldown;
@@ -122,6 +121,17 @@ class Jam extends Model
         return true;
     }
 
+    public function history(): BelongsToMany
+    {
+        return $this->belongsToMany(Song::class, 'history')
+            ->withTimestamps()
+            ->orderBy('history.created_at', 'desc');
+    }
+
+    public function addCurrentSongToHistory() {
+        $this->history()->attach($this->current_song_id);
+    }
+
     public function skip()
     {
         $this->queueNextTrack();
@@ -139,6 +149,7 @@ class Jam extends Model
         if (file_exists(storage_path('app/public/qr-codes/'.$this->id.'.svg'))) {
             return;
         }
+
         QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/'.$this->id.'.svg'));
     }
 }
