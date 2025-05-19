@@ -108,6 +108,8 @@ class Jam extends Model
 
     public function queueNextTrack()
     {
+        $this->hadActionNow();
+
         $song = $this->queue()->first();
         if ($song === null) {
             return false;
@@ -135,6 +137,7 @@ class Jam extends Model
     public function skip()
     {
         $this->queueNextTrack();
+        $this->hadActionNow();
         SpotifyService::api($this->access_token)->next();
         CheckPlayback::dispatch($this);
     }
@@ -142,6 +145,15 @@ class Jam extends Model
     public function url()
     {
         return route('jams', $this->id);
+    }
+
+    public function hadActionNow() {
+        $this->last_action_at = now();
+        $this->save();
+    }
+
+    public function isInactiveForTooLong() {
+        return $this->last_action_at && now()->diffInMinutes($this->last_action_at) > 60;
     }
 
     public function generateQrCode()

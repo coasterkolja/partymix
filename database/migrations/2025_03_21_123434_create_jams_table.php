@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('refresh_token');
             $table->dateTime('expiration_date');
             $table->boolean('is_playing')->default(false);
-            $table->foreignIdFor(Song::class, 'current_song_id')->nullable();
+            $table->foreignIdFor(Song::class, 'current_song_id')->nullable()->constrained()->cascadeOnDelete();
             $table->datetime('song_endtime')->nullable();
             $table->dateTime('last_action_at')->nullable();
             $table->string('host_token');

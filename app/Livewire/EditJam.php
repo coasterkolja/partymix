@@ -55,11 +55,14 @@ class EditJam extends Component
 
             $this->addError('playlistUrl', 'Invalid Playlist ID');
         }
+
+        $this->jam->hadActionNow();
     }
 
     public function removePlaylist($id)
     {
         $this->jam->playlists()->detach($id);
+        $this->jam->hadActionNow();
     }
 
     public function save()

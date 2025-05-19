@@ -19,6 +19,7 @@ class Queue extends Component
     public function remove(string $songId)
     {
         $this->jam->queue()->detach($songId);
+        $this->jam->hadActionNow();
     }
 
     public function render()

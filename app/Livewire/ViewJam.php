@@ -56,6 +56,9 @@ class ViewJam extends Component
         }
         
         $this->jam->queue()->attach($songId);
+
+        $this->jam->hadActionNow();
+
         event(new JamUpdated($this->jam));
     }
 }

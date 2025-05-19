@@ -16,8 +16,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('queued_songs', function (Blueprint $table) {
-            $table->foreignIdFor(Jam::class);
-            $table->foreignIdFor(Song::class);
+            $table->foreignIdFor(Jam::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Song::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
 
             $table->primary(['jam_id', 'song_id']);

@@ -35,8 +35,6 @@ class CreateJam extends Component
             'host_token' => $hostToken,
         ]);
 
-        $jam->generateQrCode();
-
         session()->put('token', $hostToken);
 
         CheckPlayback::dispatch($jam)/* ->delay(now()->addSeconds(5)) */;

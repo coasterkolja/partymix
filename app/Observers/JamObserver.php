@@ -14,6 +14,7 @@ class JamObserver
     public function created(Jam $jam): void
     {
         $jam->generateQrCode();
+        $jam->hadActionNow();
     }
 
     /**

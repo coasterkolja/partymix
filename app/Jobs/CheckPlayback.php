@@ -27,6 +27,12 @@ class CheckPlayback implements ShouldQueue
         // Delete all jobs for this jam
         DB::table('jobs')->where('payload', 'like', '%'.$this->jam->id.'%')->delete();
 
+        // When Jam was inactive for too long, delete it
+        if ($this->jam->isInactiveForTooLong()) {
+            $this->jam->delete();
+            return;
+        }
+
         // Delete all cooldowns older than cooldown time
         $this->jam->overdueCooldowns()->detach();
 
