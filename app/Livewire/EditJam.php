@@ -34,7 +34,7 @@ class EditJam extends Component
 
         try {
             $id = str(parse_url($this->playlistUrl)['path'])->explode('/')->last();
-            $playlist = SpotifyService::api($this->jam->access_token)->getPlaylist($id);
+            $playlist = SpotifyService::api($this->jam)->getPlaylist($id);
 
             $playlistModel = Playlist::firstOrCreate([
                 'id' => $playlist->id,

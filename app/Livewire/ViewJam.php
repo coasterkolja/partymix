@@ -45,7 +45,7 @@ class ViewJam extends Component
 
     public function addToQueue(string $songId)
     {
-        Song::fetchAndSave($songId, $this->jam->access_token);
+        Song::fetchAndSave($songId, $this->jam);
 
         if ($this->jam->queue()->find($songId)) {
             return;

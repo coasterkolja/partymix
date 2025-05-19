@@ -25,9 +25,9 @@ class Song extends Model
         'image',
     ];
 
-    public static function fetchAndSave($id, $token)
+    public static function fetchAndSave($id, $jam)
     {
-        $song = SpotifyService::api($token)->getTrack($id);
+        $song = SpotifyService::api($jam)->getTrack($id);
 
         self::firstOrCreate([
             'id' => $song->id,

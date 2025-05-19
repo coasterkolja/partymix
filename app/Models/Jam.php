@@ -95,7 +95,7 @@ class Jam extends Model
 
     public function updatePlaystate()
     {
-        $playstate = SpotifyService::api($this->access_token)->getMyCurrentPlaybackInfo();
+        $playstate = SpotifyService::api($this)->getMyCurrentPlaybackInfo();
 
         $this->song_endtime = $playstate->item->duration_ms ? now()->addSeconds(($playstate->item->duration_ms - $playstate->progress_ms) / 1000) : null;
         $this->is_playing = $playstate->is_playing;
@@ -103,7 +103,7 @@ class Jam extends Model
 
         $this->save();
 
-        Song::fetchAndSave($this->current_song_id, $this->access_token);
+        Song::fetchAndSave($this->current_song_id, $this);
     }
 
     public function queueNextTrack()
@@ -115,7 +115,7 @@ class Jam extends Model
             return false;
         }
 
-        SpotifyService::api($this->access_token)->queue($song->id);
+        SpotifyService::api($this)->queue($song->id);
         $this->queue()->detach($song->id);
 
         $this->cooldowns()->attach($song->id);
@@ -138,7 +138,7 @@ class Jam extends Model
     {
         $this->queueNextTrack();
         $this->hadActionNow();
-        SpotifyService::api($this->access_token)->next();
+        SpotifyService::api($this)->next();
         CheckPlayback::dispatch($this);
     }
 
