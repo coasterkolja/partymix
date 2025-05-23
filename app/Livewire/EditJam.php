@@ -17,15 +17,14 @@ class EditJam extends Component
     #[Rule('string')]
     public string $playlistUrl;
 
-    // #[Rule('required')]
-    // #[Rule('int')]
-    // public int $cooldown;
+    public int $cooldown = 0;
 
     public Jam $jam;
 
     public function mount(Jam $jam)
     {
         $this->jam = $jam;
+        $this->cooldown = $this->jam->song_cooldown;
     }
 
     public function addPlaylist()
@@ -65,9 +64,14 @@ class EditJam extends Component
         $this->jam->hadActionNow();
     }
 
-    public function save()
+    public function setCooldown()
     {
-        $this->redirect(route('jams', $this->jam->id), navigate: true);
+        $this->validate([
+            'cooldown' => 'required|int',
+        ]);
+
+        $this->jam->song_cooldown = $this->cooldown;
+        $this->jam->hadActionNow();
     }
 
     public function render()
