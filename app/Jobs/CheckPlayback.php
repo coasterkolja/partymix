@@ -29,7 +29,7 @@ class CheckPlayback implements ShouldQueue
 
         // When Jam was inactive for too long, delete it
         if ($this->jam->isInactiveForTooLong()) {
-            $this->jam->delete();
+            $this->jam->purge();
             return;
         }
 

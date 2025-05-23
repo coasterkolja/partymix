@@ -7,11 +7,12 @@ namespace App\Models;
 use App\Jobs\CheckPlayback;
 use App\Observers\JamObserver;
 use App\Services\SpotifyService;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy(JamObserver::class)]
 class Jam extends Model
@@ -111,8 +112,10 @@ class Jam extends Model
         $this->hadActionNow();
 
         $song = $this->queue()->first();
+        
         if ($song === null) {
-            return false;
+            // $song = $this->selectRandomSongFromPool();
+            return;
         }
 
         SpotifyService::api($this)->queue($song->id);
@@ -163,5 +166,22 @@ class Jam extends Model
         }
 
         QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/'.$this->id.'.svg'));
+    }
+
+    /* public function selectRandomSongFromPool() {
+        $playlists = $this->playlists()->get();
+
+
+    } */
+
+    public function purge() {
+        $this->queue()->detach();
+        $this->cooldowns()->detach();
+        $this->history()->detach();
+        $this->playlists()->detach();
+
+        DB::table('jobs')->where('payload', 'like', '%'.$this->id.'%')->delete();
+
+        $this->delete();
     }
 }

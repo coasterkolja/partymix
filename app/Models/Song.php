@@ -39,4 +39,9 @@ class Song extends Model
             'image' => Arr::last($song->album->images)->url,
         ]);
     }
+
+    public function uri(): string
+    {
+        return 'spotify:track:'.$this->id;
+    }
 }
