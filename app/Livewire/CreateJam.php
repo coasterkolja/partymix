@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
-use App\Jobs\CheckPlayback;
 use App\Models\Jam;
-use Laravel\Socialite\Facades\Socialite;
 use Livewire\Component;
+use App\Jobs\CheckPlayback;
+use Illuminate\Support\Facades\Session;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 
 class CreateJam extends Component
 {
@@ -17,10 +19,15 @@ class CreateJam extends Component
 
     public function mount()
     {
-        $spotifyUser = Socialite::driver('spotify')->user();
+        try {
+            $spotifyUser = Socialite::driver('spotify')->user();
 
-        $this->jamId = $this->generateJamId();
-        $this->user = literal(token: $spotifyUser->token, refreshToken: $spotifyUser->refreshToken, expirationDate: now()->addSeconds($spotifyUser->expiresIn));
+            $this->jamId = $this->generateJamId();
+            $this->user = literal(token: $spotifyUser->token, refreshToken: $spotifyUser->refreshToken, expirationDate: now()->addSeconds($spotifyUser->expiresIn));
+        } catch (InvalidStateException $e) {
+            Session::flash('spotify_error', 'An unexpected error occurred. Please try again.');
+            $this->redirect(route('welcome'), navigate: true);
+        }
     }
 
     public function create()
