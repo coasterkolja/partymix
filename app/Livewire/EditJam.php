@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Models\Jam;
+use Livewire\Component;
 use App\Models\Playlist;
+use App\Jobs\FetchPlaylist;
+use Livewire\Attributes\Rule;
 use App\Services\SpotifyService;
 use Illuminate\Database\UniqueConstraintViolationException;
-use Livewire\Attributes\Rule;
-use Livewire\Component;
 
 class EditJam extends Component
 {
@@ -35,19 +36,24 @@ class EditJam extends Component
             $id = str(parse_url($this->playlistUrl)['path'])->explode('/')->last();
             $playlist = SpotifyService::api($this->jam)->getPlaylist($id);
 
-            $playlistModel = Playlist::firstOrCreate([
-                'id' => $playlist->id,
-                'name' => $playlist->name,
-                'image' => $playlist->images[0]->url,
-                'snapshot_id' => $playlist->snapshot_id,
-            ]);
+            $playlistModel = Playlist::firstOrCreate(
+                [
+                    'id' => $playlist->id,
+                ],
+                [
+                    'name' => $playlist->name,
+                    'image' => $playlist->images[0]->url,
+                    'snapshot_id' => $playlist->snapshot_id,
+                ]
+            );
 
             $this->jam->playlists()->attach($playlistModel->id);
+            dispatch(new FetchPlaylist($this->jam, $playlistModel->id));
 
             unset($this->playlistUrl);
         } catch (\Throwable $e) {
             if ($e instanceof UniqueConstraintViolationException) {
-                $this->addError('playlistUrl', 'Playlist already added: '.$playlist->name);
+                $this->addError('playlistUrl', 'Playlist already added: ' . $playlist->name);
 
                 return;
             }
@@ -86,3 +92,6 @@ https://open.spotify.com/playlist/7IG1bXM4muyYn83lWwryOl : knockout von cali
 https://open.spotify.com/playlist/4KVfB3a18EBoPHPjTlrucY : genussstängel
 https://open.spotify.com/playlist/1Pwjt9bwOijnrFZI9fJcts : 80s80s
 */
+
+// DB "AAAACw8VClwYa0KX/wTrElg6J2uFvejv"
+// SF "AAAADAH10+tiMQ7OvHTRtrn2espFcxfQ"

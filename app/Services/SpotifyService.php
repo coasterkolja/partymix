@@ -12,8 +12,6 @@ class SpotifyService
 {
     public static function api($jam)
     {
-        info($jam);
-
         if ($jam instanceof Jam) {
             if (now()->gte($jam->expiration_date)) {
                 $session = new Session(

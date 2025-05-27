@@ -13,6 +13,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Log;
 
 #[ObservedBy(JamObserver::class)]
 class Jam extends Model
@@ -98,13 +99,16 @@ class Jam extends Model
     {
         $playstate = SpotifyService::api($this)->getMyCurrentPlaybackInfo();
 
-        $this->song_endtime = $playstate->item->duration_ms ? now()->addSeconds(($playstate->item->duration_ms - $playstate->progress_ms) / 1000) : null;
+        if (!$playstate) {
+            return;
+        }
+
         $this->is_playing = $playstate->is_playing;
+        $this->song_endtime = $playstate->item->duration_ms ? now()->addSeconds(($playstate->item->duration_ms - $playstate->progress_ms) / 1000) : null;
         $this->current_song_id = $playstate->item->id;
+        Song::fetchAndSave($this->current_song_id, $this);
 
         $this->save();
-
-        Song::fetchAndSave($this->current_song_id, $this);
     }
 
     public function queueNextTrack()
@@ -112,7 +116,7 @@ class Jam extends Model
         $this->hadActionNow();
 
         $song = $this->queue()->first();
-        
+
         if ($song === null) {
             // $song = $this->selectRandomSongFromPool();
             return;
@@ -133,7 +137,8 @@ class Jam extends Model
             ->orderBy('history.created_at', 'desc');
     }
 
-    public function addCurrentSongToHistory() {
+    public function addCurrentSongToHistory()
+    {
         $this->history()->attach($this->current_song_id);
     }
 
@@ -150,22 +155,28 @@ class Jam extends Model
         return route('jams', $this->id);
     }
 
-    public function hadActionNow() {
+    public function hadActionNow()
+    {
         $this->last_action_at = now();
         $this->save();
+
+        Log::debug('had action now', [
+            'time' => $this->last_action_at
+        ]);
     }
 
-    public function isInactiveForTooLong() {
-        return $this->last_action_at && now()->diffInMinutes($this->last_action_at) > 60;
+    public function isInactiveForTooLong()
+    {
+        return $this->last_action_at && $this->last_action_at->diffInMinutes() > 60;
     }
 
     public function generateQrCode()
     {
-        if (file_exists(storage_path('app/public/qr-codes/'.$this->id.'.svg'))) {
+        if (file_exists(storage_path('app/public/qr-codes/' . $this->id . '.svg'))) {
             return;
         }
 
-        QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/'.$this->id.'.svg'));
+        QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/' . $this->id . '.svg'));
     }
 
     /* public function selectRandomSongFromPool() {
@@ -174,13 +185,14 @@ class Jam extends Model
 
     } */
 
-    public function purge() {
+    public function purge()
+    {
         $this->queue()->detach();
         $this->cooldowns()->detach();
         $this->history()->detach();
         $this->playlists()->detach();
 
-        DB::table('jobs')->where('payload', 'like', '%'.$this->id.'%')->delete();
+        DB::table('jobs')->where('payload', 'like', '%' . $this->id . '%')->delete();
 
         $this->delete();
     }

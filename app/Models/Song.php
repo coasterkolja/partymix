@@ -27,17 +27,35 @@ class Song extends Model
 
     public static function fetchAndSave($id, $jam)
     {
-        $song = SpotifyService::api($jam)->getTrack($id);
+        $track = SpotifyService::api($jam)->getTrack($id);
 
-        self::firstOrCreate([
-            'id' => $song->id,
+        self::updateOrCreate([
+            'id' => $track->id,
         ], [
-            'name' => $song->name,
-            'artist' => Arr::join(Arr::map($song->artists, function ($item) {
-                return $item->name;
-            }), ', '),
-            'image' => Arr::last($song->album->images)->url,
+            'name' => $track->name,
+            'artist' => self::createArtistString($track->artists),
+            'image' => self::lastImageUrl($track->album->images),
         ]);
+    }
+
+    public static function createFromPlaylist($track) {
+        return self::updateOrCreate([
+            'id' => $track->id,
+        ], [
+            'name' => $track->name,
+            'artist' => self::createArtistString($track->artists),
+            'image' => self::lastImageUrl($track->album->images),
+        ]);
+    }
+
+    public static function createArtistString($artists) {
+        return Arr::join(Arr::map($artists, function ($item) {
+            return $item->name;
+        }), ', ');
+    }
+
+    public static function lastImageUrl($images) {
+        return Arr::last($images)->url;
     }
 
     public function uri(): string
