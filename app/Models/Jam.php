@@ -178,7 +178,7 @@ class Jam extends Model
             return;
         }
 
-        if (!directoryExists(storage_path('app/public/qr-codes'))) {
+        if (!is_dir(storage_path('app/public/qr-codes'))) {
             mkdir(storage_path('app/public/qr-codes'));
         }
 
