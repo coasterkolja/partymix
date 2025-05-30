@@ -27,4 +27,6 @@ jobs:
             composer install --no-interaction --prefer-dist --no-dev
             npm install
             npm run build
+            php artisan migrate:fresh
+            php artisan storage:link
           EOF
