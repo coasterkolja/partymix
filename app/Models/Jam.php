@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Log;
 
+use function PHPUnit\Framework\directoryExists;
+
 #[ObservedBy(JamObserver::class)]
 class Jam extends Model
 {
@@ -174,6 +176,10 @@ class Jam extends Model
     {
         if (file_exists(storage_path('app/public/qr-codes/' . $this->id . '.svg'))) {
             return;
+        }
+
+        if (!directoryExists(storage_path('app/public/qr-codes'))) {
+            mkdir(storage_path('app/public/qr-codes'));
         }
 
         QrCode::size(200)->margin(1)->generate($this->url(), storage_path('app/public/qr-codes/' . $this->id . '.svg'));
