@@ -31,7 +31,7 @@
         <div
             class="flex mt-4 flex-col gap-3 border-1 border-zinc-200 dark:border-zinc-600 rounded-lg p-2 max-h-96 overflow-y-auto">
             @if ($jam->queue->isEmpty())
-                <div class="text-sm text-muted text-center">{{ __('jam.queue_empty') }}</div>
+                <span class="text-sm text-muted text-center">{{ __('jam.queue_empty') }}</span>
             @else
                 @foreach ($jam->queue as $song)
                     <x-queue-item :song="$song" />

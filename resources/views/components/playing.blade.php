@@ -3,7 +3,7 @@
 ])
 
 @if ($jam->currentSong)
-    <x-card class="mt-4 flex justify-between items-center">
+    <x-card class="mt-4 flex justify-between items-center border">
         <div class="flex items-center gap-3">
             <img src="{{ $jam->currentSong->image }}" class="rounded-md h-12 aspect-square" />
             <div class="flex flex-col gap-1">

@@ -16,7 +16,7 @@
     <title>{{ $title ?? 'Spotify PartyMix' }}</title>
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-800">
+<body class="max-h-screen bg-white dark:bg-zinc-800">
     <div class="w-full h-screen flex items-center justify-center">
         {{ $slot }}
     </div>
