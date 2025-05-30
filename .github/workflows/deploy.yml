@@ -10,7 +10,7 @@ jobs:
       - name: Deploy using Rsync
         uses: burnett01/rsync-deployments@6.0.0
         with:
-          switches: -avrh --delete --exclude=".git" --exclude=".github"
+          switches: -avrh --delete --exclude=".git" --exclude=".github" --exclude='.env'
           path: /
           remote_path: /var/www/virtual/${{ vars.SSH_USERNAME }}/html
           remote_host: ${{ vars.SSH_HOST }}
