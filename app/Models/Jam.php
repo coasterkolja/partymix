@@ -15,8 +15,6 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Log;
 
-use function PHPUnit\Framework\directoryExists;
-
 #[ObservedBy(JamObserver::class)]
 class Jam extends Model
 {
